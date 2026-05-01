@@ -14,12 +14,16 @@ pipeline {
 
     stages {
         stage('Build Image') {
-            steps {
-                script {
-                    sh "docker build -t ${FULL_IMAGE_NAME}:latest ."
-                }
+    steps {
+        script {
+            // This manually adds the Docker tool path to the environment for this step
+            def dockerHome = tool 'default'
+            withEnv(["PATH+DOCKER=${dockerHome}/bin"]) {
+                sh "docker build -t ${FULL_IMAGE_NAME}:latest ."
             }
         }
+    }
+}
 
         stage('Push image') {
             steps {
